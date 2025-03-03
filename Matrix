@@ -1,0 +1,73 @@
+#include <stdio.h>
+
+#define NUM_CITIES 4
+
+// Function for printing paths
+void printPath(int path[], int length) {
+    for (int i = 0; i < length; i++) {
+        printf("%c ", path[i] + 'A');
+    }
+    printf("\n");
+}
+
+// Function for finding all the paths
+void findAllPaths(int graph[NUM_CITIES][NUM_CITIES], int start, int end, int visited[], int path[], int pathIndex) {
+    visited[start] = 1; // Marking city as visited
+    path[pathIndex] = start;
+    pathIndex++;
+
+    if (start == end) {
+        printPath(path, pathIndex); // If reached end, print path
+    } else {
+        for (int i = 0; i < NUM_CITIES; i++) {
+            if (graph[start][i] && !visited[i]) { // If path available and city not visited
+                findAllPaths(graph, i, end, visited, path, pathIndex);
+            }
+        }
+    }
+
+    pathIndex--;
+    visited[start] = 0; // Marking city as non-visited
+}
+
+// Main function for finding paths between 2 cities
+void findPaths(int graph[NUM_CITIES][NUM_CITIES], int start, int end) {
+    int visited[NUM_CITIES] = {0}; // Visited array
+    int path[NUM_CITIES]; // Path array
+    int pathIndex = 0;
+    findAllPaths(graph, start, end, visited, path, pathIndex);
+}
+
+int main() {
+    int graph[NUM_CITIES][NUM_CITIES] = {
+        {0, 1, 1, 0}, // A
+        {1, 0, 1, 1}, // B
+        {1, 1, 0, 1}, // C
+        {0, 1, 1, 0}  // D
+    };
+
+    char choice;
+    while(1) {
+        char startCity, endCity;
+        printf("\nEnter start city (A, B, C, D) or 'Q' to quit: ");
+        scanf(" %c", &startCity);
+
+        // Exit condition
+        if (startCity == 'Q' || startCity == 'q') {
+            printf("Exiting the program Goodbye!\n");
+            break;
+        }
+
+        printf("Enter end city (A, B, C, D): ");
+        scanf(" %c", &endCity);
+
+        int start = startCity - 'A'; // (A=0, B=1, C=2, D=3)
+        int end = endCity - 'A';
+
+        printf("All paths from %c to %c:\n", startCity, endCity);
+        findPaths(graph, start, end);
+
+    } 
+
+    return 0;
+}
